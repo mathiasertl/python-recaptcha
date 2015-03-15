@@ -14,14 +14,26 @@
 ################################################################################
 """reCAPTCHA client."""
 
+import sys
+PY3 = sys.version_info[0] == 3
+
 from json import dumps as json_encode
-from urllib import urlencode
-from urllib2 import Request
-from urllib2 import URLError
-from urllib2 import urlopen
-from urlparse import urljoin
-from urlparse import urlsplit
-from urlparse import urlunsplit
+if PY3 is True:
+    from urllib.error import URLError
+    from urllib.parse import urlencode
+    from urllib.parse import urljoin
+    from urllib.parse import urlsplit
+    from urllib.parse import urlunsplit
+    from urllib.request import Request
+    from urllib.request import urlopen
+else:
+    from urllib import urlencode
+    from urllib2 import Request
+    from urllib2 import URLError
+    from urllib2 import urlopen
+    from urlparse import urljoin
+    from urlparse import urlsplit
+    from urlparse import urlunsplit
 
 
 __all__ = [
@@ -256,7 +268,7 @@ class RecaptchaClient(object):
             urlopen_kwargs['timeout'] = self.verification_timeout
         try:
             response = urlopen(request, **urlopen_kwargs)
-        except URLError, exc:
+        except URLError as exc:
             raise RecaptchaUnreachableError(exc)
         else:
             response_lines = response.read().splitlines()
